@@ -1,0 +1,131 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Django museum</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tickets.css' %}">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <img src="{% static 'img/7GhOSAK7g.png' %}" alt="logo">
+            <div class="nav-buttons">
+                <a href="/">Відвідувачам</a>
+                <a href="/about/">Про музей</a>
+                <a href="/contacts/">Тарас Шевченко</a>
+                <a href="/tickets/">Квитки</a>
+                <a href="/profile/">Профіль</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="content">
+        <h1>Продукти (таблиця)</h1>
+        <h3>Фільтри</h3>
+        <form id="filter-form" method="GET">
+            <div>
+                <label for="daterange">Виберіть діапазон дат</label>
+                <input id="daterange" name="daterange">
+            </div>
+            <div>
+                <label for="minQ">Мінімальна кількість</label>
+                <input id="minQ" name="minQ" type="number" min="0" step="1" oninput="validity.valid||(value='');" value="{{ minQ }}" placeholder="Press Enter to apply">
+            </div>
+            <div>
+                <label for="maxQ">Максимальна кількість</label>
+                <input id="maxQ" name="maxQ" type="number" min="0" step="1" oninput="validity.valid||(value='');" value="{{ maxQ }}" placeholder="Press Enter to apply">
+            </div>
+        </form>
+        <table>
+            <tr>
+                <th>Назва</th>
+                <th>Кількість</th>
+                <th>Ціна</th>
+                <th>Дата додавання</th>
+            </tr>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.price|floatformat:2 }}</td>
+                    <td>{{ product.date_added|date:"d.m.Y" }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="fc-top">
+                <img src="{% static 'img/7GhOSAK7g.png' %}" alt="logo">
+                <div>
+                    <h4>Про нас</h4>
+                    <h4>Політика конфіденційності</h4>
+                </div>
+            </div>
+            <div class="fc-mid">
+                <div class="address1">
+                    <h3>Національний музей Тараса Шевченка</h3>
+                    <h4>м.Київ, бул. Т. Шевченка, 12</h4>
+                    <h4>Ср-Нд: 10:00 - 18:00</h4>
+                    <h4>Каса працює з 10:00 до 17:15</h4>
+                    <h4>Екскурсії: 044 234 2556</h4>
+                    <h4>shevchenko-museum@ukr.net</h4>
+                </div>
+                <div class="address2">
+                    <h3>Будинок-музей Шевченка</h3>
+                    <h4>м.Київ, пров. Тараса Шевченка, 8а</h4>
+                    <h4>Ср-Нд: 10:00 - 18:00</h4>
+                    <h4>Зателефонувати: 044 278 3511</h4>
+                </div>
+                <div class="address3">
+                    <h3>Хата на пріорці</h3>
+                    <h4>м.Київ, вулиця Вишгородська, 5</h4>
+                    <h4>Вт-Сб: 10:00 – 18:00</h4>
+                    <h4>Зателефонувати: 044 432 7627</h4>
+                </div>
+            </div>
+            <div class="fc-bottom">
+                <h4>©2024 Національний музей Тараса Шевченка</h4>
+                
+            </div>
+        </div>
+    </footer>
+
+</body>
+<script>
+    $(function() {
+        $('input[name="daterange"]').daterangepicker({
+            "locale": {
+                "format": "DD/MM/YYYY"
+            },
+            "startDate": {% if date1 %}"{{ date1 }}"{% else %}"{{"01/10/2023"}}"{% endif %},
+            {% if date2 %}"endDate": "{{ date2 }}", {% endif %}
+            opens: 'left'
+        });
+    });
+    
+    $(document).ready(function(){
+        $('input').on('keydown', function(event){
+            if (event.keyCode == 13){
+                event.preventDefault();
+                $('#filter-form').submit();
+            }
+        });
+        $('#daterange').on('apply.daterangepicker', function(event, picker){
+            console.log(picker.startDate.format('YYYY-MM-DD'));
+            $('#filter-form').submit();
+        });
+    });
+    
+    
+</script>
+</html>
